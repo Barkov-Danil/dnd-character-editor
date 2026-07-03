@@ -1,0 +1,91 @@
+import { Character } from '../types/character.types';
+
+export const LIBRARY_CHARACTERS: Character[] = [
+  {
+    id: 'lib-1',
+    name: 'Арагорн',
+    race: 'human',
+    class: 'fighter',
+    level: 1,
+    background: 'Странник',
+    alignment: 'Добрый',
+    stats: { STR: 16, DEX: 14, CON: 14, INT: 10, WIS: 12, CHA: 10 },
+    baseStats: { STR: 15, DEX: 14, CON: 13, INT: 10, WIS: 12, CHA: 10 },
+    racialBonus: { STR: 1, CON: 1 },
+    skills: [
+      { skillId: 'athletics', proficient: true, expertise: false },
+      { skillId: 'perception', proficient: true, expertise: false }
+    ],
+    savingThrows: { STR: true, CON: true },
+    hitPoints: 12,
+    maxHitPoints: 12,
+    armorClass: 16,
+    proficiencyBonus: 2,
+    speed: 30,
+    languages: ['Common', 'Эльфийский'],
+    features: ['Боевой стиль (защита)', 'Второе дыхание'],
+    experiencePoints: 0,
+    characterSheet: 'Благородный наследник престола Гондора',
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  },
+  {
+    id: 'lib-2',
+    name: 'Гэндальф',
+    race: 'elf',
+    class: 'wizard',
+    level: 1,
+    background: 'Мудрец',
+    alignment: 'Добрый',
+    stats: { STR: 8, DEX: 12, CON: 14, INT: 17, WIS: 14, CHA: 12 },
+    baseStats: { STR: 8, DEX: 12, CON: 13, INT: 16, WIS: 14, CHA: 12 },
+    racialBonus: { DEX: 2, INT: 1 },
+    skills: [
+      { skillId: 'arcana', proficient: true, expertise: false },
+      { skillId: 'history', proficient: true, expertise: false },
+      { skillId: 'insight', proficient: true, expertise: false }
+    ],
+    savingThrows: { INT: true, WIS: true },
+    hitPoints: 8,
+    maxHitPoints: 8,
+    armorClass: 11,
+    proficiencyBonus: 2,
+    speed: 30,
+    languages: ['Common', 'Эльфийский', 'Драконий'],
+    features: ['Заклинания', 'Магическое восстановление'],
+    experiencePoints: 0,
+    characterSheet: 'Магистр Ордена Истари',
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  },
+  {
+    id: 'lib-3',
+    name: 'Леголас',
+    race: 'elf',
+    class: 'rogue',
+    level: 1,
+    background: 'Охотник',
+    alignment: 'Добрый',
+    stats: { STR: 10, DEX: 18, CON: 12, INT: 14, WIS: 14, CHA: 10 },
+    baseStats: { STR: 10, DEX: 16, CON: 12, INT: 14, WIS: 14, CHA: 10 },
+    racialBonus: { DEX: 2 },
+    skills: [
+      { skillId: 'stealth', proficient: true, expertise: false },
+      { skillId: 'acrobatics', proficient: true, expertise: false },
+      { skillId: 'perception', proficient: true, expertise: false },
+      { skillId: 'survival', proficient: true, expertise: false }
+    ],
+    savingThrows: { DEX: true, INT: true },
+    hitPoints: 10,
+    maxHitPoints: 10,
+    armorClass: 16,
+    proficiencyBonus: 2,
+    speed: 30,
+    languages: ['Common', 'Эльфийский'],
+    features: ['Скрытая атака', 'Знание языка'],
+    experiencePoints: 0,
+    characterSheet: 'Принц Лесного королевства, мастер лука',
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  }
+];
