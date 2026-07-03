@@ -1,0 +1,76 @@
+import { Race } from '../types/character.types';
+
+export const RACES: Record<string, Race> = {
+  human: {
+    id: 'human',
+    name: 'Человек',
+    description: 'Самые адаптивные и амбициозные существа',
+    abilityBonuses: { STR: 1, DEX: 1, CON: 1, INT: 1, WIS: 1, CHA: 1 },
+    speed: 30,
+    size: 'Medium',
+    languages: ['Common', 'Один дополнительный'],
+    traits: ['Универсальность', 'Ускоренное развитие'],
+  },
+  elf: {
+    id: 'elf',
+    name: 'Эльф',
+    description: 'Древние и грациозные существа',
+    abilityBonuses: { DEX: 2 },
+    speed: 30,
+    size: 'Medium',
+    languages: ['Common', 'Эльфийский'],
+    traits: ['Тёмное зрение', 'Острое чувство', 'Наследие фей'],
+    subRaces: [
+      {
+        id: 'high_elf',
+        name: 'Высший эльф',
+        abilityBonuses: { INT: 1 },
+        traits: ['Владение оружием', 'Заговор'],
+      },
+      {
+        id: 'wood_elf',
+        name: 'Лесной эльф',
+        abilityBonuses: { WIS: 1 },
+        traits: ['Скрытность', 'Быстрый шаг'],
+      },
+    ],
+  },
+  dwarf: {
+    id: 'dwarf',
+    name: 'Дварф',
+    description: 'Крепкие и стойкие горные мастера',
+    abilityBonuses: { CON: 2 },
+    speed: 25,
+    size: 'Medium',
+    languages: ['Common', 'Дварфийский'],
+    traits: ['Тёмное зрение', 'Устойчивость к яду', 'Знание камня'],
+    subRaces: [
+      {
+        id: 'hill_dwarf',
+        name: 'Дварф холмов',
+        abilityBonuses: { WIS: 1 },
+        traits: ['Стойкость дварфа'],
+      },
+    ],
+  },
+  halfling: {
+    id: 'halfling',
+    name: 'Полурослик',
+    description: 'Маленькие, но удачливые и хитрые',
+    abilityBonuses: { DEX: 2 },
+    speed: 25,
+    size: 'Small',
+    languages: ['Common', 'Полурослийский'],
+    traits: ['Удача', 'Храбрость', 'Скрытность'],
+  },
+  dragonborn: {
+    id: 'dragonborn',
+    name: 'Драконорождённый',
+    description: 'Потомки драконов с гордой душой',
+    abilityBonuses: { STR: 2, CHA: 1 },
+    speed: 30,
+    size: 'Medium',
+    languages: ['Common', 'Драконий'],
+    traits: ['Дыхание дракона', 'Сопротивление урону'],
+  },
+};
