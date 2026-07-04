@@ -1,99 +1,122 @@
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { router } from 'expo-router';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { Button, Card, FAB } from 'react-native-paper';
+import { StatusBar } from 'expo-status-bar';
+import { IconButton } from 'react-native-paper';
 import { useCharacterStore } from './store/characterStore';
-import { COLORS, FONT, SPACING } from './theme';
-import { LIBRARY_CHARACTERS } from './utils/gameData';
+
+const MIP_ICON = require('../../assets/images/mip.png');
+const BUTTER_ICON = require('../../assets/images/butter.png');
+const LUPA_ICON = require('../../assets/images/lupa.png');
 
 export default function HomeScreen() {
   const savedCharacters = useCharacterStore((s) => s.savedCharacters);
-  const setLibraryCharacters = useCharacterStore((s) => s.setLibraryCharacters);
-
-  const handleCreateNew = () => router.push('/wizard/step1-race');
-  const handleOpenLibrary = () => {
-    setLibraryCharacters(LIBRARY_CHARACTERS);
-    router.push('/library');
-  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.headerTitle}>Мои персонажи</Text>
+    <View style={styles.screen}>
+      <StatusBar style="light" />
 
+      <View style={styles.topBar}>
+        <Image source={BUTTER_ICON} style={styles.topIcon} resizeMode="contain" />
+        <Image source={LUPA_ICON} style={styles.topIcon} resizeMode="contain" />
+      </View>
+
+      <Text style={styles.title}>Все персонажи</Text>
       {savedCharacters.length === 0 ? (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyTitle}>Персонажей пока нет</Text>
-          <Text style={styles.emptyText}>
-            Создайте первого персонажа или загрузите готового из библиотеки
+        <View style={styles.centerWrap}>
+          <Image source={MIP_ICON} style={styles.mipImg} resizeMode="contain" />
+          <Text style={styles.subtitle}>
+            {'Создайте своего персонажа\nили добавьте из библиотеки!'}
           </Text>
-          <Button mode="contained" onPress={handleCreateNew} style={styles.emptyBtn}>
-            Создать персонажа
-          </Button>
-          <Button mode="outlined" onPress={handleOpenLibrary} style={styles.emptyBtn}>
-            Библиотека персонажей
-          </Button>
         </View>
       ) : (
-        <ScrollView style={styles.scrollView}>
+        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           {savedCharacters.map((char) => (
-            <Card
+            <TouchableOpacity
               key={char.id}
-              style={styles.card}
-              onPress={() => router.push(`/character/${char.id}`)}
+              style={styles.charCard}
+              onPress={() => router.push(`/character/${char.id}` as `/character/${string}`)}
+              activeOpacity={0.7}
             >
-              <Card.Content style={styles.cardContent}>
-                <View style={styles.cardHeader}>
-                  <Text style={styles.charName}>{char.name}</Text>
-                  <Text style={styles.charLevel}>Ур. {char.level}</Text>
-                </View>
-                <Text style={styles.charRaceClass}>{char.race} / {char.class}</Text>
-                <View style={styles.divider} />
-                <View style={styles.quickStats}>
-                  <View style={styles.statBox}>
-                    <Text style={styles.statLabel}>HP</Text>
-                    <Text style={styles.statValue}>{char.hitPoints}/{char.maxHitPoints}</Text>
-                  </View>
-                  <View style={styles.statBox}>
-                    <Text style={styles.statLabel}>AC</Text>
-                    <Text style={styles.statValue}>{char.armorClass}</Text>
-                  </View>
-                  <View style={styles.statBox}>
-                    <Text style={styles.statLabel}>Скор.</Text>
-                    <Text style={styles.statValue}>{char.speed}</Text>
-                  </View>
-                  <View style={styles.statBox}>
-                    <Text style={styles.statLabel}>Бонус</Text>
-                    <Text style={styles.statValue}>+{char.proficiencyBonus}</Text>
-                  </View>
-                </View>
-              </Card.Content>
-            </Card>
+              <Text style={styles.charName}>
+                {char.name}
+                {char.customRace ? ' ✦' : ''}
+              </Text>
+              <Text style={styles.charInfo}>
+                {char.race} / {char.class} · Ур. {char.level}
+              </Text>
+              <Text style={styles.charSub}>{char.alignment} · {char.background}</Text>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       )}
 
-      <FAB icon="plus" style={styles.fab} onPress={handleCreateNew} label="Создать" />
+      <View style={styles.bottom}>
+        <TouchableOpacity
+          onPress={() => router.push('/wizard/step1-race' as `/wizard/step1-race`)}
+          style={styles.mainBtn}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.mainBtnText}>Создать персонажа</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/library')} style={styles.linkBtn}>
+          <Text style={styles.linkText}>Импортировать из библиотеки</Text>
+        </TouchableOpacity>
+      </View>
+
+      <IconButton
+        icon="calculator-variant"
+        mode="contained"
+        size={28}
+        iconColor="#FFFFFF"
+        containerColor="#D85336"
+        style={styles.calcFab}
+        onPress={() => router.push('/calculator' as `/calculator`)}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
-  headerTitle: { fontSize: 24, fontWeight: 'bold', color: COLORS.text, padding: 16 },
-  emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 32 },
-  emptyTitle: { fontSize: 18, fontWeight: '600', color: COLORS.text, marginBottom: 8 },
-  emptyText: { fontSize: 14, color: COLORS.textSecondary, textAlign: 'center', marginBottom: 24 },
-  emptyBtn: { marginVertical: 4, minWidth: 200 },
-  scrollView: { flex: 1, paddingHorizontal: 16 },
-  card: { backgroundColor: COLORS.surface, borderRadius: 8, marginVertical: SPACING.sm },
-  cardContent: { padding: 12 },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  charName: { fontSize: 20, fontWeight: 'bold', color: COLORS.accent },
-  charLevel: { fontSize: 14, color: COLORS.textSecondary },
-  charRaceClass: { color: COLORS.textSecondary, fontSize: 14 },
-  divider: { height: 1, backgroundColor: COLORS.border, marginVertical: 8 },
-  quickStats: { flexDirection: 'row', justifyContent: 'space-around' },
-  statBox: { alignItems: 'center' },
-  statLabel: { fontSize: 12, color: COLORS.textSecondary },
-  statValue: { fontSize: 16, fontWeight: 'bold', color: COLORS.accent },
-  fab: { position: 'absolute', right: 16, bottom: 16, backgroundColor: COLORS.primary },
+  screen: { flex: 1, backgroundColor: '#000000' },
+  topBar: {
+    height: 56, width: '100%', flexDirection: 'row',
+    alignItems: 'center', justifyContent: 'space-between', marginTop: 52,
+  },
+  topIcon: { width: 48, height: 48 },
+  title: {
+    marginTop: 8, paddingLeft: 16, paddingRight: 16,
+    color: '#DBDBDB', fontSize: 28, fontFamily: 'PlayfairDisplay-Medium', textAlign: 'left',
+  },
+  centerWrap: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  mipImg: { width: 208, height: 208, marginBottom: 24 },
+  subtitle: {
+    color: 'rgba(219, 219, 219, 0.7)', fontSize: 16,
+    fontFamily: 'Spectral-Regular', textAlign: 'center', lineHeight: 22,
+  },
+  bottom: { alignItems: 'center', justifyContent: 'center', paddingBottom: 48, gap: 8 },
+  linkBtn: { paddingVertical: 4 },
+  linkText: { color: '#D85336', fontFamily: 'Spectral-Regular', fontSize: 14, textAlign: 'center' },
+  mainBtn: {
+    width: 312, height: 44, borderRadius: 14,
+    backgroundColor: '#D85336', alignItems: 'center', justifyContent: 'center',
+  },
+  mainBtnText: { color: '#DBDBDB', fontFamily: 'Spectral-Medium', fontSize: 16 },
+
+  scroll: { flex: 1 },
+  scrollContent: { padding: 16, gap: 10 },
+  charCard: {
+    backgroundColor: '#1e1e1e', borderRadius: 12, padding: 16,
+    borderWidth: 1, borderColor: '#2a2a2a',
+  },
+  charName: { color: '#D85336', fontSize: 18, fontWeight: 'bold' },
+  charInfo: { color: '#DBDBDB', fontSize: 14, marginTop: 4 },
+  charSub: { color: 'rgba(219,219,219,0.6)', fontSize: 12, marginTop: 2 },
+
+  calcFab: {
+    position: 'absolute',
+    bottom: 24,
+    right: 16,
+    backgroundColor: '#D85336',
+    borderRadius: 28,
+  },
 });

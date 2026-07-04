@@ -1,7 +1,19 @@
 import { Character } from '../types/character.types';
 
+const makeLibCharacter = (overrides: Partial<Character>): Character => ({
+  armorId: 'none',
+  hasShield: false,
+  inventory: [],
+  coins: { pp: 0, gp: 10, sp: 0, cp: 0 },
+  backstory: '',
+  isLibrary: true,
+  seenLevel: 0,
+  backgroundId: '',
+  ...overrides,
+} as Character);
+
 export const LIBRARY_CHARACTERS: Character[] = [
-  {
+  makeLibCharacter({
     id: 'lib-1',
     name: 'Арагорн',
     race: 'human',
@@ -28,8 +40,8 @@ export const LIBRARY_CHARACTERS: Character[] = [
     characterSheet: 'Благородный наследник престола Гондора',
     createdAt: Date.now(),
     updatedAt: Date.now()
-  },
-  {
+  }),
+  makeLibCharacter({
     id: 'lib-2',
     name: 'Гэндальф',
     race: 'elf',
@@ -57,8 +69,8 @@ export const LIBRARY_CHARACTERS: Character[] = [
     characterSheet: 'Магистр Ордена Истари',
     createdAt: Date.now(),
     updatedAt: Date.now()
-  },
-  {
+  }),
+  makeLibCharacter({
     id: 'lib-3',
     name: 'Леголас',
     race: 'elf',
@@ -87,5 +99,5 @@ export const LIBRARY_CHARACTERS: Character[] = [
     characterSheet: 'Принц Лесного королевства, мастер лука',
     createdAt: Date.now(),
     updatedAt: Date.now()
-  }
+  })
 ];

@@ -1,8 +1,22 @@
 import type { Character, CharacterStats } from '../types';
 import { STAT_KEYS } from '../types';
+import { RACES } from './gameData';
 
 export function calculateModifier(statValue: number): number {
   return Math.floor((statValue - 10) / 2);
+}
+
+export function abilityBonusSum(bonuses: Partial<CharacterStats>): number {
+  return STAT_KEYS.reduce((sum, k) => sum + (bonuses[k] ?? 0), 0);
+}
+
+export function maxRaceBonusSum(): number {
+  let max = 0;
+  for (const r of Object.values(RACES)) {
+    const s = abilityBonusSum(r.abilityBonuses);
+    if (s > max) max = s;
+  }
+  return max;
 }
 
 export function formatModifier(statValue: number): string {
@@ -21,6 +35,17 @@ export function calculateAC(dexBonus: number): number {
 
 export function proficiencyBonusFor(level: number): number {
   return Math.ceil(level / 4) + 1;
+}
+
+export function calculateACFromArmor(
+  armor: { kind: 'none' | 'light' | 'medium' | 'heavy'; baseAC: number; dexCap: number | null } | undefined,
+  dexMod: number,
+  hasShield: boolean,
+): number {
+  const base = armor?.baseAC ?? 10;
+  const dexCap = armor?.dexCap ?? null;
+  const dex = dexCap === null ? dexMod : Math.min(dexMod, dexCap);
+  return base + (dex > 0 ? dex : 0) + (hasShield ? 2 : 0);
 }
 
 export function validateCharacter(character: Character, skillPool: string[], skillChoices: number): string[] {

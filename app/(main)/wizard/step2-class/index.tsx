@@ -1,5 +1,5 @@
 import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { Button, Card } from 'react-native-paper';
+import { Button, Card, Chip } from 'react-native-paper';
 import { router } from 'expo-router';
 import { COLORS, FONT, SPACING } from '../../theme';
 import { WizardStepper, TooltipHint } from '../../components';
@@ -11,6 +11,9 @@ export default function Step2Class() {
   const selectedClass = useCharacterStore((s) => s.selectedClass);
   const selectedRace = useCharacterStore((s) => s.selectedRace);
   const setSelectedClass = useCharacterStore((s) => s.setSelectedClass);
+  const customClasses = useCharacterStore((s) => s.customClasses);
+
+  const allClasses = [...Object.values(CHARACTER_CLASSES), ...customClasses];
 
   const goNext = () => {
     router.push('/wizard/step3-stats');
@@ -30,17 +33,21 @@ export default function Step2Class() {
       </Text>
 
       <FlatList
-        data={Object.values(CHARACTER_CLASSES)}
+        data={allClasses}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
           const selected = selectedClass === item.id;
+          const isCustom = 'isCustom' in item;
           return (
             <Card
               style={[styles.card, selected && styles.cardSelected]}
               onPress={() => setSelectedClass(item.id)}
             >
               <Card.Content>
-                <Text style={styles.name}>{item.name}</Text>
+                <View style={styles.nameRow}>
+                  <Text style={styles.name}>{item.name}</Text>
+                  {isCustom && <Chip style={styles.customChip}>Homebrew</Chip>}
+                </View>
                 <Text style={styles.desc}>{item.description}</Text>
                 <Text style={styles.info}>
                   КХ: d{item.hitDie} · Осн.: {item.primaryStat} · Навыки: {item.skillChoices} из {item.skillPool.length}
@@ -80,7 +87,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
   },
   cardSelected: { borderColor: COLORS.primary, backgroundColor: COLORS.surfaceVariant },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   name: { fontSize: FONT.size.lg, fontWeight: '600', color: COLORS.primary },
+  customChip: { backgroundColor: COLORS.accent, height: 24 },
   desc: { fontSize: FONT.size.sm, color: COLORS.text, marginTop: 4, lineHeight: 20 },
   info: { fontSize: FONT.size.xs, color: COLORS.textSecondary, marginTop: 6 },
   saves: { fontSize: FONT.size.xs, color: COLORS.textSecondary, marginTop: 2 },

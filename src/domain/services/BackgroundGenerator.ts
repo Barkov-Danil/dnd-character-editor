@@ -1,5 +1,4 @@
 import { Character } from '../../shared/types/character.types';
-import { RACES } from '../../shared/constants/races';
 import { CLASSES } from '../../shared/constants/classes';
 
 export interface BackgroundTemplate {
@@ -146,9 +145,7 @@ export class BackgroundGenerator {
     if (!character.class) throw new Error('У персонажа нет класса');
     if (!character.stats) throw new Error('У персонажа нет характеристик');
 
-    const race = RACES[character.race];
     const classInfo = CLASSES[character.class];
-    const raceName = race?.name || character.race;
     const className = classInfo?.name || character.class;
 
     const settlement = this.getSettlement(character.race);
@@ -242,7 +239,7 @@ export class BackgroundGenerator {
     return fullBackground;
   }
 
-  private generatePersonality(character: Character): string {
+  private generatePersonality(_character: Character): string {
     const traits = ['добрый', 'суровый', 'весёлый', 'серьёзный', 'хитрый', 'благородный', 'скромный', 'гордый'];
     const situations = ['опасности', 'беде', 'радости', 'споре', 'битве', 'мире'];
     const effects = ['все уважают', 'ему доверяют', 'его боятся', 'им восхищаются', 'его любят'];
@@ -262,7 +259,7 @@ export class BackgroundGenerator {
     );
   }
 
-  private generateFlaw(character: Character): string {
+  private generateFlaw(_character: Character): string {
     const flaws = ['гордыню', 'самоуверенность', 'недоверие', 'безрассудство', 'упрямство', 'жестокость', 'лень', 'зависть'];
     const problems = ['мешает в работе с командой', 'приводит к конфликтам', 'создаёт проблемы'];
     const hindrances = ['он слишком самоуверен', 'не может контролировать себя', 'часто ошибается'];
@@ -281,7 +278,7 @@ export class BackgroundGenerator {
     );
   }
 
-  private generateBond(character: Character): string {
+  private generateBond(_character: Character): string {
     const bonds = ['друзья', 'семья', 'наставник', 'брат по оружию', 'любимый человек', 'народ'];
     const feelings = ['вдохновляет', 'заставляет двигаться вперёд', 'даёт силы', 'напоминает о цели'];
     const commitments = ['будет защищать до конца', 'предан им безгранично', 'отдаст за них жизнь'];

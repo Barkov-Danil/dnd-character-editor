@@ -8,10 +8,18 @@ import type { Character } from './types';
 export default function LibraryScreen() {
   const libraryCharacters = useCharacterStore((s) => s.libraryCharacters);
   const savedCharacters = useCharacterStore((s) => s.savedCharacters);
-  const addSavedCharacter = useCharacterStore((s) => s.addSavedCharacter);
+  const addCharacter = useCharacterStore((s) => s.addCharacter);
+  const setCurrentCharacterId = useCharacterStore((s) => s.setCurrentCharacterId);
 
   const isImported = (char: Character) =>
     savedCharacters.some((s) => s.id === char.id || s.name === char.name);
+
+  const handleImport = (char: Character) => {
+    const id = `import-${Date.now()}`;
+    const newChar = { ...char, id, isLibrary: false, createdAt: Date.now(), updatedAt: Date.now() };
+    addCharacter(newChar);
+    setCurrentCharacterId(id);
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -37,7 +45,7 @@ export default function LibraryScreen() {
               {isImported(char) ? (
                 <Text style={styles.imported}>Уже импортирован</Text>
               ) : (
-                <Button mode="contained" onPress={() => addSavedCharacter(char)}>
+                <Button mode="contained" onPress={() => handleImport(char)} disabled={isImported(char)}>
                   Импортировать
                 </Button>
               )}

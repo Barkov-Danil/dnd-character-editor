@@ -19,7 +19,8 @@
   },
   "include": [
     "app/**/*",
-    "App.tsx"
+    "App.tsx",
+    "src/**/*"
   ],
   "exclude": [
     "node_modules"

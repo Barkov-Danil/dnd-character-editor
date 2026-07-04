@@ -2,11 +2,10 @@ import { View, ScrollView, Text, StyleSheet } from 'react-native';
 import { Button, Card, Divider } from 'react-native-paper';
 import { router } from 'expo-router';
 import { COLORS, FONT, SPACING } from '../../theme';
-import { WizardStepper, StatBlock } from '../../components';
+import { WizardStepper, StatBlock, TooltipHint } from '../../components';
 import { useCharacterStore } from '../../store/characterStore';
 import { SKILLS_LIST, WIZARD_STEPS } from '../../utils/gameData';
 import { validateCharacter, calculateHP, calculateAC, proficiencyBonusFor } from '../../utils/rulesEngine';
-import { STAT_KEYS } from '../../types';
 import type { CharacterStats, Character } from '../../types';
 
 const FALLBACK_STATS: CharacterStats = { STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 };
@@ -40,6 +39,7 @@ export default function Step6Review() {
     class: selectedClassObject?.id ?? 'fighter',
     level: 1,
     background: characterBackground || 'Неизвестно',
+    backgroundId: '',
     alignment: characterAlignment || 'Нейтральный',
     stats: finalStats,
     baseStats: finalStats,
@@ -49,12 +49,16 @@ export default function Step6Review() {
     hitPoints: maxHP,
     maxHitPoints: maxHP,
     armorClass: ac,
+    armorId: 'none',
+    hasShield: false,
     proficiencyBonus: proficiencyBonusFor(1),
     speed: selectedRaceObject?.speed ?? 30,
     languages: selectedRaceObject?.languages ?? ['Общий'],
     features: [],
     inventory: [],
+    coins: { pp: 0, gp: 0, sp: 0, cp: 0 },
     experiencePoints: 0,
+    backstory: '',
     characterSheet: '',
     isLibrary: false,
     createdAt: Date.now(),
@@ -78,6 +82,7 @@ export default function Step6Review() {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Обзор персонажа</Text>
+        <TooltipHint text="Финальная проверка всех параметров. Убедитесь, что характеристики рассчитаны верно, навыки выбраны, а имя и предыстория заполнены. После сохранения персонаж появится в списке." />
       </View>
 
       <WizardStepper currentStep={currentStep} steps={WIZARD_STEPS} />
