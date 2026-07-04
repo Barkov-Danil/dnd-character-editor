@@ -1,25 +1,26 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export class StorageAdapter {
-  private key: string;
+export interface IStorageAdapter {
+  getItem(key: string): Promise<string | null>;
+  setItem(key: string, value: string): Promise<void>;
+  removeItem(key: string): Promise<void>;
+  clear(): Promise<void>;
+}
 
-  constructor(key: string = 'characters') {
-    this.key = key;
+export class AsyncStorageAdapter implements IStorageAdapter {
+  async getItem(key: string): Promise<string | null> {
+    return await AsyncStorage.getItem(key);
   }
 
-  async saveData(data: string): Promise<void> {
-    await AsyncStorage.setItem(this.key, data);
+  async setItem(key: string, value: string): Promise<void> {
+    await AsyncStorage.setItem(key, value);
   }
 
-  async loadData(): Promise<string | null> {
-    return await AsyncStorage.getItem(this.key);
+  async removeItem(key: string): Promise<void> {
+    await AsyncStorage.removeItem(key);
   }
 
-  async deleteData(): Promise<void> {
-    await AsyncStorage.removeItem(this.key);
-  }
-
-  async executeQuery(query: string, params?: any[]): Promise<any[]> {
-    return [];
+  async clear(): Promise<void> {
+    await AsyncStorage.clear();
   }
 }

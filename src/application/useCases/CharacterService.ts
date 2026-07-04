@@ -3,6 +3,8 @@ import { ICharacterRepository } from '../../domain/repositories/ICharacterReposi
 import { RulesValidator } from '../../domain/validators/RulesValidator';
 import { LIBRARY_CHARACTERS } from '../../shared/constants/library';
 import { BackgroundGenerator } from '../../domain/services/BackgroundGenerator';
+import { Race } from '../../shared/types/character.types';
+import { ClassInfo } from '../../shared/types/character.types';
 
 export class CharacterService {
   private backgroundGenerator = new BackgroundGenerator();
@@ -124,5 +126,128 @@ export class CharacterService {
 
   generateBackgroundWithoutSave(character: Character): string {
     return this.backgroundGenerator.generateOnly(character);
+  }
+
+  async saveCustomRace(race: Race): Promise<void> {
+    await this.repository.saveCustomRace(race);
+  }
+
+  async loadCustomRaces(): Promise<Race[]> {
+    return await this.repository.loadCustomRaces();
+  }
+
+  async deleteCustomRace(id: string): Promise<void> {
+    await this.repository.deleteCustomRace(id);
+  }
+
+  async getCustomRace(id: string): Promise<Race | null> {
+    return await this.repository.getCustomRace(id);
+  }
+
+  async saveCustomClass(classInfo: ClassInfo): Promise<void> {
+    await this.repository.saveCustomClass(classInfo);
+  }
+
+  async loadCustomClasses(): Promise<ClassInfo[]> {
+    return await this.repository.loadCustomClasses();
+  }
+
+  async deleteCustomClass(id: string): Promise<void> {
+    await this.repository.deleteCustomClass(id);
+  }
+
+  async getCustomClass(id: string): Promise<ClassInfo | null> {
+    return await this.repository.getCustomClass(id);
+  }
+
+  async getAllRaces(): Promise<Race[]> {
+    const customRaces = await this.repository.loadCustomRaces();
+    const { RACES } = await import('../../shared/constants/races');
+    const standardRaces = Object.values(RACES);
+    return [...standardRaces, ...customRaces];
+  }
+
+  async getAllClasses(): Promise<ClassInfo[]> {
+    const customClasses = await this.repository.loadCustomClasses();
+    const { CLASSES } = await import('../../shared/constants/classes');
+    const standardClasses = Object.values(CLASSES);
+    return [...standardClasses, ...customClasses];
+  }
+
+  async getRace(id: string): Promise<Race | null> {
+    const { RACES } = await import('../../shared/constants/races');
+    if (RACES[id]) return RACES[id];
+    return await this.repository.getCustomRace(id);
+  }
+
+  async getClass(id: string): Promise<ClassInfo | null> {
+    const { CLASSES } = await import('../../shared/constants/classes');
+    if (CLASSES[id]) return CLASSES[id];
+    return await this.repository.getCustomClass(id);
+  }
+
+  validateCustomRace(race: Partial<Race>): { valid: boolean; errors: string[] } {
+    const errors: string[] = [];
+    
+    if (!race.id) errors.push('ID расы обязателен');
+    if (!race.name || race.name.length < 1) errors.push('Название расы обязательно');
+    if (!race.speed || race.speed < 0) errors.push('Скорость должна быть положительным числом');
+    if (!race.size || !['Small', 'Medium'].includes(race.size)) {
+      errors.push('Размер должен быть Small или Medium');
+    }
+    
+    return { valid: errors.length === 0, errors };
+  }
+
+  validateCustomClass(classInfo: Partial<ClassInfo>): { valid: boolean; errors: string[] } {
+    const errors: string[] = [];
+    
+    if (!classInfo.id) errors.push('ID класса обязателен');
+    if (!classInfo.name || classInfo.name.length < 1) errors.push('Название класса обязательно');
+    if (!classInfo.hitDie || ![6, 8, 10, 12].includes(classInfo.hitDie)) {
+      errors.push('Кость хитов должна быть 6, 8, 10 или 12');
+    }
+    if (!classInfo.primaryStat) errors.push('Основная характеристика обязательна');
+    
+    return { valid: errors.length === 0, errors };
+  }
+
+  async exportCustomData(): Promise<string> {
+    const races = await this.repository.loadCustomRaces();
+    const classes = await this.repository.loadCustomClasses();
+    
+    return JSON.stringify({
+      version: '1.0',
+      exportedAt: Date.now(),
+      customRaces: races,
+      customClasses: classes
+    }, null, 2);
+  }
+
+  async importCustomData(json: string): Promise<{ races: number; classes: number }> {
+    const data = JSON.parse(json);
+    
+    if (!data.customRaces && !data.customClasses) {
+      throw new Error('Некорректный формат данных');
+    }
+    
+    let raceCount = 0;
+    let classCount = 0;
+    
+    if (data.customRaces && Array.isArray(data.customRaces)) {
+      for (const race of data.customRaces) {
+        await this.repository.saveCustomRace(race);
+        raceCount++;
+      }
+    }
+    
+    if (data.customClasses && Array.isArray(data.customClasses)) {
+      for (const classInfo of data.customClasses) {
+        await this.repository.saveCustomClass(classInfo);
+        classCount++;
+      }
+    }
+    
+    return { races: raceCount, classes: classCount };
   }
 }
