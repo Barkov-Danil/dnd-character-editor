@@ -2,8 +2,11 @@ import { Character } from '../../shared/types/character.types';
 import { ICharacterRepository } from '../../domain/repositories/ICharacterRepository';
 import { RulesValidator } from '../../domain/validators/RulesValidator';
 import { LIBRARY_CHARACTERS } from '../../shared/constants/library';
+import { BackgroundGenerator } from '../../domain/services/BackgroundGenerator';
 
 export class CharacterService {
+  private backgroundGenerator = new BackgroundGenerator();
+
   constructor(
     private repository: ICharacterRepository,
     private validator: RulesValidator
@@ -108,5 +111,18 @@ export class CharacterService {
   async getCharactersByRace(raceId: string): Promise<Character[]> {
     const characters = await this.loadAllCharacters();
     return characters.filter(char => char.race === raceId);
+  }
+
+  async generateBackgroundForCharacter(id: string): Promise<Character> {
+    const character = await this.repository.load(id);
+    if (!character) throw new Error('Персонаж не найден');
+    
+    const updated = this.backgroundGenerator.generateAndAttach(character);
+    await this.saveCharacter(updated);
+    return updated;
+  }
+
+  generateBackgroundWithoutSave(character: Character): string {
+    return this.backgroundGenerator.generateOnly(character);
   }
 }

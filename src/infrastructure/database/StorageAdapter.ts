@@ -19,9 +19,7 @@ export class StorageAdapter {
     await AsyncStorage.removeItem(this.key);
   }
 
-  // Если используете SQLite
   async executeQuery(query: string, params?: any[]): Promise<any[]> {
-    // SQLite логика
     return [];
   }
 }

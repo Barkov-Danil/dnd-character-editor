@@ -4,11 +4,13 @@ import { CLASSES } from '../../shared/constants/classes';
 import { SKILLS } from '../../shared/constants/skills';
 import { StatGenerator } from '../rules/StatGenerator';
 import { RulesValidator } from '../validators/RulesValidator';
+import { BackgroundGenerator } from '../services/BackgroundGenerator';
 
 export class CharacterBuilder {
   private character: Partial<Character> = {};
   private statGenerator = new StatGenerator();
   private validator = new RulesValidator();
+  private backgroundGenerator = new BackgroundGenerator();
 
   selectRace(raceId: string): this {
     const race = RACES[raceId];
@@ -177,6 +179,20 @@ export class CharacterBuilder {
     if (!result.valid) {
       throw new Error(`Персонаж невалиден: ${result.errors.join(', ')}`);
     }
+
+    if (!this.character.characterSheet || this.character.characterSheet.length === 0) {
+      const tempCharacter = { ...this.character } as Character;
+      tempCharacter.stats = this.character.stats!;
+      tempCharacter.race = this.character.race!;
+      tempCharacter.class = this.character.class!;
+      
+      try {
+        this.character.characterSheet = this.backgroundGenerator.generateOnly(tempCharacter);
+      } catch (error) {
+        console.warn('Не удалось сгенерировать историю:', error);
+        this.character.characterSheet = 'История этого героя ждёт своего рассказчика...';
+      }
+    }
     
     return character;
   }
@@ -192,5 +208,22 @@ export class CharacterBuilder {
 
   private generateId(): string {
     return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  }
+
+  generateBackground(): this {
+    if (!this.character.name) {
+      throw new Error('Сначала заполните имя персонажа');
+    }
+    
+    const tempCharacter = this.build();
+    const background = this.backgroundGenerator.generateOnly(tempCharacter);
+    this.character.characterSheet = background;
+    
+    return this;
+  }
+
+  setBackgroundManually(text: string): this {
+    this.character.characterSheet = text;
+    return this;
   }
 }
